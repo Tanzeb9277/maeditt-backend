@@ -32,9 +32,11 @@ app.use(helmet());
 
 app.set("views", __dirname);
 app.set("view engine", "ejs");
-app.use(cors({
-  origin:'https://tanzeb9277.github.io'
-}));
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.use(bodyParser.json());
 
 
