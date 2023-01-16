@@ -30,6 +30,19 @@ const comment_controller = require('./controllers/commentController')
 const app = express();
 app.use(helmet());
 
+const whitelist = ["https://tanzeb9277.github.io"]
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
+  credentials: true,
+}
+app.use(cors(corsOptions))
+
 app.set("views", __dirname);
 app.set("view engine", "ejs");
 app.use(function(req, res, next) {
