@@ -30,16 +30,7 @@ const comment_controller = require('./controllers/commentController')
 const app = express();
 app.use(helmet());
 
-var allowlist = ['https://tanzeb9277.github.io', 'http://localhost:3000']
-var corsOptionsDelegate = function (req, callback) {
-  var corsOptions;
-  if (allowlist.indexOf(req.header('Origin')) !== -1) {
-    corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false } // disable CORS for this request
-  }
-  callback(null, corsOptions) // callback expects two parameters: error and options
-}
+app.options('*', cors())
 
 
 
@@ -64,7 +55,7 @@ app.use(express.urlencoded({ extended: false }));
 app.post('/sign-up', user_controller.create_user);
 
 
-  app.post('/log-in', cors(corsOptionsDelegate), function(req, res, next) {
+  app.post('/log-in', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
       if (!user) {
         // *** Display message without using flash option
