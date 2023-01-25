@@ -30,14 +30,7 @@ const comment_controller = require('./controllers/commentController')
 const app = express();
 app.use(helmet());
 
-const headers = (req, res, next) => {
-	const origin = (req.headers.origin == 'http://localhost:3000') ? 'http://localhost:3000' : 'https://tanzeb9277.github.io/'
-	res.setHeader('Access-Control-Allow-Origin', origin)
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
-	res.setHeader('Access-Control-Allow-Credentials', true)
-	next()
-}
+
 
 
 
@@ -62,7 +55,7 @@ app.use(express.urlencoded({ extended: false }));
 app.post('/sign-up', user_controller.create_user);
 
 
-  app.post('/log-in', cors(), headers, function(req, res, next) {
+  app.post('/log-in', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
       if (!user) {
         // *** Display message without using flash option
@@ -80,19 +73,19 @@ app.post('/sign-up', user_controller.create_user);
     })(req, res, next);
   });
 
-  app.get('/posts', headers,  post_controller.post_list)
+  app.get('/posts', post_controller.post_list)
 
-  app.get('/:currentUserId', headers, user_controller.get_user)
+  app.get('/:currentUserId', user_controller.get_user)
 
-  app.get('/:postId/comments', headers, comment_controller.get_comments)
+  app.get('/:postId/comments', comment_controller.get_comments)
 
-  app.post('/:currentUserId/friend-request/:userId', cors(), headers, user_controller.friend_request)
-  app.post('/:currentUserId/accept-request/:userId', cors(), headers, user_controller.accept_request)
-  app.post('/:currentUserId/decline-request/:userId', cors(), headers, user_controller.decline_request)
-  app.post('/:currentUserId/create-post', cors(), headers, post_controller.posts_create_post)
-  app.post('/:currentUserId/like-post/:postId', cors(), headers, post_controller.like_post)
-  app.post('/:currentUserId/unlike-post/:postId', cors(), headers, post_controller.unlike_post)
-  app.post('/:currentUserId/comment/:postId', cors(), headers, comment_controller.create_comment)
+  app.post('/:currentUserId/friend-request/:userId', user_controller.friend_request)
+  app.post('/:currentUserId/accept-request/:userId', user_controller.accept_request)
+  app.post('/:currentUserId/decline-request/:userId', headers, user_controller.decline_request)
+  app.post('/:currentUserId/create-post', post_controller.posts_create_post)
+  app.post('/:currentUserId/like-post/:postId', post_controller.like_post)
+  app.post('/:currentUserId/unlike-post/:postId', post_controller.unlike_post)
+  app.post('/:currentUserId/comment/:postId', comment_controller.create_comment)
 
 passport.use(
   new LocalStrategy((username, password, done) => {
